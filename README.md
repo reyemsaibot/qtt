@@ -12,4 +12,4 @@ Or you search with the query element uid to find the corresponding query
 
 Or you insert a transport request to find out what behind the query element uids.
 
-![Transport Elements](https://github.com/reyemsaibot/qtt/blob/master/img/transport-elements.png)
+![Transport Elements](https://github.com/reyemsaibot/qtt/blob/master/img/transport_elements.png)
