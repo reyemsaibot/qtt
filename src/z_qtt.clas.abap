@@ -26,14 +26,21 @@ private section.
         mapname TYPE rszcompid,
         defaulthint TYPE rszdefaulthint,
        END OF ty_elem .
-
   types:
     BEGIN OF ty_trkorr,
          trkorr   TYPE trkorr,
          trstatus TYPE trstatus,
        END OF ty_trkorr .
 
+ types:
+    tyt_range TYPE STANDARD TABLE OF rsrange WITH EMPTY KEY .
 
+  class-methods _CREATERANGE
+    importing
+      !IT_TABLE type STANDARD TABLE
+      !I_FIELD type STRING
+    returning
+      value(E_RANGE) type tyt_range .
   class-methods OUTPUT
     importing
       !IT_TABLE type STANDARD TABLE
@@ -177,69 +184,39 @@ endmethod.
 
 
 method GET_REQUEST_ELEM_CONTENT.
-TYPES: BEGIN OF ty_e071,
-        trkorr   TYPE trkorr,
-        obj_name TYPE trobj_name,
-       END OF ty_e071.
 
-DATA: lt_transport_request TYPE TABLE OF ty_trkorr,
-      e070                 TYPE TABLE OF ty_trkorr,
-      lt_elem              TYPE TABLE OF ty_elem,
-      lt_elem_output       TYPE TABLE OF ty_elem,
-      lt_e071              TYPE TABLE OF ty_e071,
+DATA: lt_elem              TYPE TABLE OF ty_elem,
       lt_fieldcat          TYPE slis_t_fieldcat_alv,
       ls_fieldcat          TYPE slis_fieldcat_alv.
 
-SELECT trkorr,
-       trstatus
+SELECT trkorr
   FROM e070
-  INTO TABLE @lt_transport_request
+  INTO TABLE @data(lt_transport_request)
   WHERE trkorr IN @it_request.
 
-    SELECT trkorr
-      FROM e070
-      INTO TABLE @e070
-      WHERE strkorr IN @it_request.
+SELECT trkorr
+  FROM e070
+  INTO TABLE @data(e070)
+ WHERE strkorr IN @it_request.
 
+Append lines of e070 to lt_transport_request.
 
-    SELECT trkorr,
-         obj_name
-    FROM e071
-    INTO TABLE @lt_e071
-    WHERE trkorr IN @it_request.
+data(transports) = _createrange( it_table = lt_transport_request
+                                 i_field  = 'TRKORR' ).
 
-      SELECT eltuid,
-             mapname,
-             defaulthint
-        FROM rszeltdir
-        INTO TABLE @lt_elem
-        WHERE objvers = @rs_c_objvers-active.
+SELECT eltuid,
+       mapname,
+       defaulthint
+  FROM rszeltdir
+  INNER JOIN e071 on rszeltdir~eltuid = e071~obj_name
+  INTO TABLE @lt_elem
+  WHERE trkorr IN @transports
+  and  object = 'ELEM'
+  and  rszeltdir~objvers = @rs_c_objvers-active.
+Sort lt_elem ASCENDING BY eltuid.
+DELETE ADJACENT DUPLICATES FROM lt_elem COMPARING eltuid.
 
-      SELECT trkorr,
-             obj_name
-        FROM e071
-        INTO TABLE @lt_e071
-        WHERE object = 'ELEM'.
-
-IF lt_transport_request[] IS NOT INITIAL.
-  LOOP AT lt_transport_request ASSIGNING FIELD-SYMBOL(<ls_tr>).
-   IF lt_e071 IS INITIAL OR <ls_tr>-trstatus = 'R'.
-    IF e070[] IS NOT INITIAL.
-      LOOP AT lt_e071 ASSIGNING FIELD-SYMBOL(<ls_e071>).
-        READ TABLE e070 ASSIGNING FIELD-SYMBOL(<ls_e070>) WITH KEY trkorr = <ls_e071>-trkorr.
-        IF sy-subrc = 0.
-          READ TABLE lt_elem ASSIGNING FIELD-SYMBOL(<ls_elem>) WITH KEY eltuid = <ls_e071>-obj_name.
-          IF sy-subrc = 0.
-            APPEND <ls_elem> TO lt_elem_output.
-          ENDIF.
-        ENDIF.
-      ENDLOOP.
-    ENDIF.
-   ENDIF.
-  ENDLOOP.
-ENDIF.
-
-IF lt_elem_output[] IS NOT INITIAL.
+IF lt_elem[] IS NOT INITIAL.
 
 *Create field catalog
   ls_fieldcat-fieldname = 'ELTUID'.
@@ -254,7 +231,7 @@ IF lt_elem_output[] IS NOT INITIAL.
   ls_fieldcat-seltext_m = 'Object'.
   APPEND ls_fieldcat TO lt_fieldcat.
 
-  output( Exporting it_table       = lt_elem_output
+  output( Exporting it_table       = lt_elem
                     it_description = lt_fieldcat ).
 
 ENDIF.
@@ -288,4 +265,25 @@ CATCH cx_salv_not_found.
 CATCH cx_salv_msg.
 ENDTRY.
 ENDMETHOD.
+
+
+method _CREATERANGE.
+DATA: range          TYPE rsrange,
+      table_of_range TYPE tyt_range.
+
+FIELD-SYMBOLS: <fs_value>     TYPE any,
+               <fs_structure> TYPE any.
+
+DATA(field) = i_field.
+
+LOOP AT it_table ASSIGNING FIELD-SYMBOL(<ls_table>).
+  ASSIGN it_table[ sy-tabix ] TO <fs_structure>.
+  ASSIGN COMPONENT field OF STRUCTURE <fs_structure> TO <fs_value>.
+  range-sign   = 'I'.
+  range-option = 'EQ'.
+  range-low    = <fs_value>.
+  APPEND range TO table_of_range.
+ENDLOOP.
+e_range = table_of_range.
+endmethod.
 ENDCLASS.
