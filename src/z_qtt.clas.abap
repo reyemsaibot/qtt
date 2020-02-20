@@ -1,3 +1,4 @@
+"! <p class="shorttext synchronized" lang="en">Query Transport Tool</p>
 class Z_QTT definition
   public
   final
@@ -5,49 +6,68 @@ class Z_QTT definition
 
 public section.
 
-  "! @parameter it_elem | Import table of ELEM objects
+  "! <p class="shorttext synchronized" lang="en">Check ELEM Objects to determine the query</p>
+  "!
+  "! @parameter it_elem | <p class="shorttext synchronized" lang="en">Import table of ELEM objects</p>
   class-methods GET_ELEM_INFORMATION
     importing
       !IT_ELEM type STANDARD TABLE .
-   "! Get all transport requests with the imported query.
-   "! @parameter i_query | Import query you want to search on transports
+
+   "! <p class="shorttext synchronized" lang="en">Get all transport requests with the imported query.</p>
+   "!
+   "! @parameter i_query | <p class="shorttext synchronized" lang="en">Import query you want to search on transports</p>
    class-methods GET_QUERY_ON_REQUESTS
     importing
       !I_QUERY type RSZCOMPID .
+
+  "! <p class="shorttext synchronized" lang="en">Check Query Elements on Transport Requests</p>
+  "!
+  "! @parameter IT_REQUEST | <p class="shorttext synchronized" lang="en">Transport Request you want to search</p>
   class-methods GET_REQUEST_ELEM_CONTENT
     importing
       !IT_REQUEST type STANDARD TABLE .
+
 protected section.
 private section.
 
-  types:
+  types: "! <p class="shorttext synchronized" lang="en">Type of Query</p>
     BEGIN OF ty_elem,
-        eltuid  TYPE sysuuid_25,
-        mapname TYPE rszcompid,
+        eltuid      TYPE sysuuid_25,
+        mapname     TYPE rszcompid,
         defaulthint TYPE rszdefaulthint,
        END OF ty_elem .
-  types:
+
+  types: "! <p class="shorttext synchronized" lang="en">Type of Transport Request</p>
     BEGIN OF ty_trkorr,
          trkorr   TYPE trkorr,
          trstatus TYPE trstatus,
        END OF ty_trkorr .
 
- types:
+  types: "! <p class="shorttext synchronized" lang="en">Table of Range</p>
     tyt_range TYPE STANDARD TABLE OF rsrange WITH EMPTY KEY .
 
+  "! <p class="shorttext synchronized" lang="en">Create Range for Selection</p>
+  "!
+  "! @parameter IT_TABLE | <p class="shorttext synchronized" lang="en">Table with single elements</p>
+  "! @parameter I_FIELD  | <p class="shorttext synchronized" lang="en">Field you want to use of the table</p>
+  "! @parameter E_RANGE  | <p class="shorttext synchronized" lang="en">Return a table of Range (Sign, Option, Low, High)</p>
   class-methods _CREATERANGE
     importing
       !IT_TABLE type STANDARD TABLE
-      !I_FIELD type STRING
+      !I_FIELD  type STRING
     returning
       value(E_RANGE) type tyt_range .
+
+  "! <p class="shorttext synchronized" lang="en">Create Output with ALV Grid</p>
+  "!
+  "! @parameter IT_TABLE       | <p class="shorttext synchronized" lang="en">Table you want to display</p>
+  "! @parameter IT_DESCRIPTION | <p class="shorttext synchronized" lang="en">Header for the ALV Grid</p>
   class-methods OUTPUT
     importing
-      !IT_TABLE type STANDARD TABLE
+      !IT_TABLE       type STANDARD TABLE
       !IT_DESCRIPTION type SLIS_T_FIELDCAT_ALV .
+
 ENDCLASS.
-
-
 
 CLASS Z_QTT IMPLEMENTATION.
 
@@ -132,12 +152,12 @@ IF lt_query[] IS NOT INITIAL.
         WHERE object = 'ELEM' AND
               obj_name = <ls_query>.
 
-      ASSIGN lt_tr_desc[ 1 ] TO FIELD-SYMBOL(<ls_tr_desc>).
+      "ASSIGN lt_tr_desc[ 1 ] TO FIELD-SYMBOL(<ls_tr_desc>).
       IF sy-subrc EQ 0.
         LOOP AT lt_transporte ASSIGNING FIELD-SYMBOL(<ls_transporte>).
           TRY.
-            <ls_tr_desc> = lt_tr_desc[ trkorr = <ls_transporte> ].
-            APPEND <ls_tr_desc> TO lt_request.
+            "<ls_tr_desc> = lt_tr_desc[ trkorr = <ls_transporte> ].
+            APPEND lt_tr_desc[ trkorr = <ls_transporte> ] TO lt_request.
           CATCH cx_sy_itab_line_not_found.
           ENDTRY.
         ENDLOOP.
@@ -185,9 +205,9 @@ endmethod.
 
 method GET_REQUEST_ELEM_CONTENT.
 
-DATA: lt_elem              TYPE TABLE OF ty_elem,
-      lt_fieldcat          TYPE slis_t_fieldcat_alv,
-      ls_fieldcat          TYPE slis_fieldcat_alv.
+DATA: lt_elem      TYPE TABLE OF ty_elem,
+      lt_fieldcat  TYPE slis_t_fieldcat_alv,
+      ls_fieldcat  TYPE slis_fieldcat_alv.
 
 SELECT trkorr
   FROM e070
@@ -213,6 +233,7 @@ SELECT eltuid,
   WHERE trkorr IN @transports
   and  object = 'ELEM'
   and  rszeltdir~objvers = @rs_c_objvers-active.
+
 Sort lt_elem ASCENDING BY eltuid.
 DELETE ADJACENT DUPLICATES FROM lt_elem COMPARING eltuid.
 

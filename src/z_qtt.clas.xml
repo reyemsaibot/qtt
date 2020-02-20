@@ -11,6 +11,56 @@
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
    </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>Z_QTT</CLSNAME>
+     <CMPNAME>GET_ELEM_INFORMATION</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Check ELEM Objects to determine the query</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>Z_QTT</CLSNAME>
+     <CMPNAME>GET_QUERY_ON_REQUESTS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get all transport requests with the imported query.</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>Z_QTT</CLSNAME>
+     <CMPNAME>GET_REQUEST_ELEM_CONTENT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Check Query Elements on Transport Requests</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>Z_QTT</CLSNAME>
+     <CMPNAME>OUTPUT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Create Output with ALV Grid</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>Z_QTT</CLSNAME>
+     <CMPNAME>TYT_RANGE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Table of Range</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>Z_QTT</CLSNAME>
+     <CMPNAME>TY_ELEM</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Type of Query</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>Z_QTT</CLSNAME>
+     <CMPNAME>TY_TRKORR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Type of Transport Request</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CLSNAME>Z_QTT</CLSNAME>
+     <CMPNAME>_CREATERANGE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Create Range for Selection</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>
