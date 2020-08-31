@@ -5,7 +5,7 @@
 *&---------------------------------------------------------------------*
 REPORT z_qtt.
 
-Data :lv_elem   TYPE sysuuid_25,
+Data: lv_elem   TYPE sysuuid_25,
       lv_tr     TYPE trkorr.
 
 SELECTION-SCREEN BEGIN OF BLOCK b1k2 WITH FRAME TITLE text-001.
@@ -15,14 +15,14 @@ SELECTION-SCREEN BEGIN OF BLOCK b1k2 WITH FRAME TITLE text-001.
 SELECTION-SCREEN END OF BLOCK b1k2.
 
 IF p_query NE ''.
-  z_qtt=>get_query_on_requests( p_query ).
+  zcl_qtt=>get_query_on_requests( p_query ).
   exit.
 ENDIF.
 
 "Identify query element
 IF s_el-low <> ''.
-  z_qtt=>get_elem_information( s_el[] ).
+  zcl_qtt=>get_elem_information( s_el[] ).
 "Content of transport requests
 ELSEIF s_tr-low <> ''.
-  z_qtt=>get_request_elem_content( s_tr[] ).
+  zcl_qtt=>get_request_elem_content( s_tr[] ).
 ENDIF.

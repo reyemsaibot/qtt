@@ -1,51 +1,51 @@
 "#autoformat
 "! <p class="shorttext synchronized" lang="en">Query Transport Tool</p>
-CLASS z_qtt DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+class ZCL_QTT definition
+  public
+  final
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
     "! <p class="shorttext synchronized" lang="en">Check ELEM Objects to determine the query</p>
     "!
     "! @parameter it_elem | <p class="shorttext synchronized" lang="en">Import table of ELEM objects</p>
-    CLASS-METHODS get_elem_information
-      IMPORTING
-        !it_elem TYPE STANDARD TABLE .
-
+  class-methods GET_ELEM_INFORMATION
+    importing
+      !IT_ELEM type STANDARD TABLE .
     "! <p class="shorttext synchronized" lang="en">Get all transport requests with the imported query.</p>
     "!
-    "! @parameter i_query | <p class="shorttext synchronized" lang="en">Import query you want to search on transports</p>
-    CLASS-METHODS get_query_on_requests
-      IMPORTING
-        !i_query TYPE rszcompid .
-
+    "! @parameter iv_query | <p class="shorttext synchronized" lang="en">Import query you want to search on transports</p>
+  class-methods GET_QUERY_ON_REQUESTS
+    importing
+      !IV_QUERY type RSZCOMPID .
     "! <p class="shorttext synchronized" lang="en">Check Query Elements on Transport Requests</p>
     "!
     "! @parameter IT_REQUEST | <p class="shorttext synchronized" lang="en">Transport Request you want to search</p>
-    CLASS-METHODS get_request_elem_content
-      IMPORTING
-        !it_request TYPE STANDARD TABLE .
-
+  class-methods GET_REQUEST_ELEM_CONTENT
+    importing
+      !IT_REQUEST type STANDARD TABLE .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
-    TYPES: "! <p class="shorttext synchronized" lang="en">Type of Query</p>
+    TYPES:
+      "! <p class="shorttext synchronized" lang="en">Type of Query</p>
       BEGIN OF ty_elem,
         eltuid      TYPE sysuuid_25,
         mapname     TYPE rszcompid,
         defaulthint TYPE rszdefaulthint,
-      END OF ty_elem .
+      END OF ty_elem.
 
-    TYPES: "! <p class="shorttext synchronized" lang="en">Type of Transport Request</p>
+    TYPES:
+      "! <p class="shorttext synchronized" lang="en">Type of Transport Request</p>
       BEGIN OF ty_trkorr,
         trkorr   TYPE trkorr,
         trstatus TYPE trstatus,
-      END OF ty_trkorr .
+      END OF ty_trkorr.
 
-    TYPES: "! <p class="shorttext synchronized" lang="en">Table of Range</p>
-      tyt_range TYPE STANDARD TABLE OF rsrange WITH EMPTY KEY .
+    TYPES:
+      "! <p class="shorttext synchronized" lang="en">Table of Range</p>
+      ty_t_range TYPE STANDARD TABLE OF rsrange WITH EMPTY KEY.
 
     "! <p class="shorttext synchronized" lang="en">Create Range for Selection</p>
     "!
@@ -54,10 +54,10 @@ CLASS z_qtt DEFINITION
     "! @parameter E_RANGE  | <p class="shorttext synchronized" lang="en">Return a table of Range (Sign, Option, Low, High)</p>
     CLASS-METHODS _createrange
       IMPORTING
-        !it_table      TYPE STANDARD TABLE
-        !i_field       TYPE string
+        !it_table       TYPE STANDARD TABLE
+        !iv_field       TYPE string
       RETURNING
-        VALUE(e_range) TYPE tyt_range .
+        VALUE(rt_range) TYPE ty_t_range.
 
     "! <p class="shorttext synchronized" lang="en">Create Output with ALV Grid</p>
     "!
@@ -66,13 +66,16 @@ CLASS z_qtt DEFINITION
     CLASS-METHODS output
       IMPORTING
         !it_table       TYPE STANDARD TABLE
-        !it_description TYPE slis_t_fieldcat_alv .
+        !it_description TYPE slis_t_fieldcat_alv.
 
 ENDCLASS.
 
-CLASS z_qtt IMPLEMENTATION.
 
-  METHOD get_elem_information.
+
+CLASS ZCL_QTT IMPLEMENTATION.
+
+
+  METHOD GET_ELEM_INFORMATION.
     DATA: lt_elem_output TYPE TABLE OF ty_elem,
           lt_fieldcat    TYPE slis_t_fieldcat_alv,
           ls_fieldcat    TYPE slis_fieldcat_alv.
@@ -94,13 +97,13 @@ CLASS z_qtt IMPLEMENTATION.
     APPEND ls_fieldcat TO lt_fieldcat.
 
     IF lt_elem_output[] IS NOT INITIAL.
-      output( EXPORTING it_table       = lt_elem_output
-                        it_description = lt_fieldcat ).
+      output( it_table       = lt_elem_output
+              it_description = lt_fieldcat ).
     ENDIF.
   ENDMETHOD.
 
 
-  METHOD get_query_on_requests.
+  METHOD GET_QUERY_ON_REQUESTS.
 
     TYPES: BEGIN OF ty_request,
              trkorr   TYPE trkorr,
@@ -110,7 +113,6 @@ CLASS z_qtt IMPLEMENTATION.
              as4time  TYPE as4time,
              as4text  TYPE as4text,
            END OF ty_request,
-
            BEGIN OF ty_query,
              compid TYPE sysuuid_25,
            END OF ty_query.
@@ -123,13 +125,13 @@ CLASS z_qtt IMPLEMENTATION.
           ls_fieldcat   TYPE slis_fieldcat_alv.
 
     "Select all Transport request from E070
-    SELECT e070~trkorr
-           e070~trstatus
-           e070~as4user
-           e070~as4date
-           e070~as4time
+    SELECT e070~trkorr,
+           e070~trstatus,
+           e070~as4user,
+           e070~as4date,
+           e070~as4time,
            e07t~as4text
-      INTO TABLE lt_tr_desc
+      INTO TABLE @lt_tr_desc
       FROM e070
       INNER JOIN e07t ON e070~trkorr = e07t~trkorr
       WHERE e070~strkorr = ''.
@@ -137,26 +139,24 @@ CLASS z_qtt IMPLEMENTATION.
     "Select ID from Query
     SELECT eltuid
       FROM rszeltdir
-      INTO TABLE lt_query
-      WHERE mapname = i_query AND
-            objvers = rs_c_objvers-active.
+      INTO TABLE @lt_query
+      WHERE mapname = @iv_query AND
+            objvers = @rs_c_objvers-active.
 
     IF lt_query[] IS NOT INITIAL.
       ASSIGN lt_query[ 1 ] TO FIELD-SYMBOL(<ls_query>).
-      IF sy-subrc EQ 0.
+      IF sy-subrc = 0.
         TRY.
             <ls_query> = lt_query[ 1 ].
             SELECT trkorr
-              INTO TABLE lt_transporte
               FROM e071
+              INTO TABLE @lt_transporte
               WHERE object = 'ELEM' AND
-                    obj_name = <ls_query>.
+                    obj_name = @<ls_query>.
 
-            "ASSIGN lt_tr_desc[ 1 ] TO FIELD-SYMBOL(<ls_tr_desc>).
-            IF sy-subrc EQ 0.
+            IF sy-subrc = 0.
               LOOP AT lt_transporte ASSIGNING FIELD-SYMBOL(<ls_transporte>).
                 TRY.
-                    "<ls_tr_desc> = lt_tr_desc[ trkorr = <ls_transporte> ].
                     APPEND lt_tr_desc[ trkorr = <ls_transporte> ] TO lt_request.
                   CATCH cx_sy_itab_line_not_found.
                 ENDTRY.
@@ -196,14 +196,14 @@ CLASS z_qtt IMPLEMENTATION.
       APPEND ls_fieldcat TO lt_fieldcat.
 
       SORT lt_request ASCENDING BY trkorr.
-      output( EXPORTING it_table       = lt_request
-                        it_description = lt_fieldcat ).
+      output( it_table       = lt_request
+              it_description = lt_fieldcat ).
     ENDIF.
 
   ENDMETHOD.
 
 
-  METHOD get_request_elem_content.
+  METHOD GET_REQUEST_ELEM_CONTENT.
 
     DATA: lt_elem     TYPE TABLE OF ty_elem,
           lt_fieldcat TYPE slis_t_fieldcat_alv,
@@ -216,13 +216,13 @@ CLASS z_qtt IMPLEMENTATION.
 
     SELECT trkorr
       FROM e070
-      INTO TABLE @DATA(e070)
-     WHERE strkorr IN @it_request.
+      INTO TABLE @DATA(lt_e070)
+      WHERE strkorr IN @it_request.
 
-    APPEND LINES OF e070 TO lt_transport_request.
+    APPEND LINES OF lt_e070 TO lt_transport_request.
 
-    DATA(transports) = _createrange( it_table = lt_transport_request
-                                     i_field  = 'TRKORR' ).
+    DATA(lt_transports) = _createrange( it_table = lt_transport_request
+                                        iv_field  = 'TRKORR' ).
 
     SELECT eltuid,
            mapname,
@@ -230,9 +230,9 @@ CLASS z_qtt IMPLEMENTATION.
       FROM rszeltdir
       INNER JOIN e071 ON rszeltdir~eltuid = e071~obj_name
       INTO TABLE @lt_elem
-      WHERE trkorr IN @transports
-      AND  object = 'ELEM'
-      AND  rszeltdir~objvers = @rs_c_objvers-active.
+      WHERE trkorr IN @lt_transports AND
+            object = 'ELEM' AND
+            rszeltdir~objvers = @rs_c_objvers-active.
 
     SORT lt_elem ASCENDING BY eltuid.
     DELETE ADJACENT DUPLICATES FROM lt_elem COMPARING eltuid.
@@ -252,27 +252,26 @@ CLASS z_qtt IMPLEMENTATION.
       ls_fieldcat-seltext_m = 'Object'.
       APPEND ls_fieldcat TO lt_fieldcat.
 
-      output( EXPORTING it_table       = lt_elem
-                        it_description = lt_fieldcat ).
+      output( it_table       = lt_elem
+              it_description = lt_fieldcat ).
 
     ENDIF.
 
   ENDMETHOD.
 
 
-  METHOD output.
-    DATA: gr_table  TYPE REF TO cl_salv_table,
-          dref      TYPE REF TO data,
-          lv_layout TYPE slis_layout_alv.
+  METHOD OUTPUT.
+    DATA: lr_dref   TYPE REF TO data.
+    DATA: lv_layout TYPE slis_layout_alv.
 
-    FIELD-SYMBOLS: <fs_table> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS: <lt_table> TYPE STANDARD TABLE.
 
     lv_layout-colwidth_optimize  = rs_c_true.
 
-    CREATE DATA dref LIKE it_table.
-    ASSIGN dref->* TO <fs_table>.
+    CREATE DATA lr_dref LIKE it_table.
+    ASSIGN lr_dref->* TO <lt_table>.
 
-    <fs_table> = it_table.
+    <lt_table> = it_table.
 
     TRY.
         CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
@@ -280,7 +279,7 @@ CLASS z_qtt IMPLEMENTATION.
             is_layout   = lv_layout
             it_fieldcat = it_description
           TABLES
-            t_outtab    = <fs_table>.
+            t_outtab    = <lt_table>.
 
       CATCH cx_salv_not_found.
       CATCH cx_salv_msg.
@@ -288,23 +287,23 @@ CLASS z_qtt IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD _createrange.
-    DATA: range          TYPE rsrange,
-          table_of_range TYPE tyt_range.
+  METHOD _CREATERANGE.
+    DATA: ls_range TYPE rsrange.
+    DATA: lt_range TYPE ty_t_range.
 
-    FIELD-SYMBOLS: <fs_value>     TYPE any,
-                   <fs_structure> TYPE any.
+    FIELD-SYMBOLS: <lv_value>     TYPE any,
+                   <ls_structure> TYPE any.
 
-    DATA(field) = i_field.
+    DATA(lv_field) = iv_field.
 
     LOOP AT it_table ASSIGNING FIELD-SYMBOL(<ls_table>).
-      ASSIGN it_table[ sy-tabix ] TO <fs_structure>.
-      ASSIGN COMPONENT field OF STRUCTURE <fs_structure> TO <fs_value>.
-      range-sign   = 'I'.
-      range-option = 'EQ'.
-      range-low    = <fs_value>.
-      APPEND range TO table_of_range.
+      ASSIGN it_table[ sy-tabix ] TO <ls_structure>.
+      ASSIGN COMPONENT lv_field OF STRUCTURE <ls_structure> TO <lv_value>.
+      ls_range-sign   = 'I'.
+      ls_range-option = 'EQ'.
+      ls_range-low    = <lv_value>.
+      APPEND ls_range TO lt_range.
     ENDLOOP.
-    e_range = table_of_range.
+    rt_range = lt_range.
   ENDMETHOD.
 ENDCLASS.
