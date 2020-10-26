@@ -1,22 +1,39 @@
-*&---------------------------------------------------------------------*
-*& Report z_qtt
-*&---------------------------------------------------------------------*
-*&
-*&---------------------------------------------------------------------*
+**********************************************************************
+* Author: T.Meyer, 04.10.20
+**********************************************************************
+*
+* Query Transport Tool
+* Check if a certain query is on which transports by technical name
+* Check if a which queries are on a specific transport
+* Identify query element
+*
+**********************************************************************
+* Change log
+**********************************************************************
+* 04.10.20 TM initial version
+**********************************************************************
 REPORT z_qtt.
 
-Data: lv_elem   TYPE sysuuid_25,
-      lv_tr     TYPE trkorr.
+DATA: lv_elem   TYPE sysuuid_25.
+DATA: lv_tr     TYPE trkorr.
 
-SELECTION-SCREEN BEGIN OF BLOCK b1k2 WITH FRAME TITLE text-001.
-  PARAMETERS:     p_query TYPE rszcompid.
-  SELECT-OPTIONS: s_tr FOR lv_tr,
-                  s_el FOR lv_elem.
+SELECTION-SCREEN BEGIN OF BLOCK b1k1 with frame.
+PARAMETERS: p_query TYPE rszcompid.
+
+SELECTION-SCREEN END OF BLOCK b1k1.
+
+SELECTION-SCREEN BEGIN OF BLOCK b1k2 with frame.
+SELECT-OPTIONS: s_tr FOR lv_tr,
+                s_el FOR lv_elem.
+
 SELECTION-SCREEN END OF BLOCK b1k2.
 
-IF p_query NE ''.
+
+
+"Check Query on transport requests
+IF p_query <> ''.
   zcl_qtt=>get_query_on_requests( p_query ).
-  exit.
+  EXIT.
 ENDIF.
 
 "Identify query element

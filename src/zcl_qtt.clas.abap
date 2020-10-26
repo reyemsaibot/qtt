@@ -1,30 +1,30 @@
 "#autoformat
 "! <p class="shorttext synchronized" lang="en">Query Transport Tool</p>
-class ZCL_QTT definition
-  public
-  final
-  create public .
+CLASS zcl_qtt DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC.
 
-public section.
+  PUBLIC SECTION.
 
     "! <p class="shorttext synchronized" lang="en">Check ELEM Objects to determine the query</p>
     "!
     "! @parameter it_elem | <p class="shorttext synchronized" lang="en">Import table of ELEM objects</p>
-  class-methods GET_ELEM_INFORMATION
-    importing
-      !IT_ELEM type STANDARD TABLE .
+    CLASS-METHODS get_elem_information
+      IMPORTING
+        !it_elem TYPE STANDARD TABLE.
     "! <p class="shorttext synchronized" lang="en">Get all transport requests with the imported query.</p>
     "!
     "! @parameter iv_query | <p class="shorttext synchronized" lang="en">Import query you want to search on transports</p>
-  class-methods GET_QUERY_ON_REQUESTS
-    importing
-      !IV_QUERY type RSZCOMPID .
+    CLASS-METHODS get_query_on_requests
+      IMPORTING
+        !iv_query TYPE rszcompid.
     "! <p class="shorttext synchronized" lang="en">Check Query Elements on Transport Requests</p>
     "!
     "! @parameter IT_REQUEST | <p class="shorttext synchronized" lang="en">Transport Request you want to search</p>
-  class-methods GET_REQUEST_ELEM_CONTENT
-    importing
-      !IT_REQUEST type STANDARD TABLE .
+    CLASS-METHODS get_request_elem_content
+      IMPORTING
+        !it_request TYPE STANDARD TABLE.
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -72,10 +72,10 @@ ENDCLASS.
 
 
 
-CLASS ZCL_QTT IMPLEMENTATION.
+CLASS zcl_qtt IMPLEMENTATION.
 
 
-  METHOD GET_ELEM_INFORMATION.
+  METHOD get_elem_information.
     DATA: lt_elem_output TYPE TABLE OF ty_elem,
           lt_fieldcat    TYPE slis_t_fieldcat_alv,
           ls_fieldcat    TYPE slis_fieldcat_alv.
@@ -103,7 +103,7 @@ CLASS ZCL_QTT IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD GET_QUERY_ON_REQUESTS.
+  METHOD get_query_on_requests.
 
     TYPES: BEGIN OF ty_request,
              trkorr   TYPE trkorr,
@@ -203,7 +203,7 @@ CLASS ZCL_QTT IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD GET_REQUEST_ELEM_CONTENT.
+  METHOD get_request_elem_content.
 
     DATA: lt_elem     TYPE TABLE OF ty_elem,
           lt_fieldcat TYPE slis_t_fieldcat_alv,
@@ -260,7 +260,7 @@ CLASS ZCL_QTT IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD OUTPUT.
+  METHOD output.
     DATA: lr_dref   TYPE REF TO data.
     DATA: lv_layout TYPE slis_layout_alv.
 
@@ -287,7 +287,7 @@ CLASS ZCL_QTT IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD _CREATERANGE.
+  METHOD _createrange.
     DATA: ls_range TYPE rsrange.
     DATA: lt_range TYPE ty_t_range.
 
