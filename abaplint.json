@@ -69,7 +69,8 @@
       "wdyn_limu_component_definition",
       "wdyn_limu_component_view",
 	  "rs_c_true",
-	  "rs_c_objvers"
+	  "rs_c_objvers",
+	  "rs_c_false"
     ],
     "globalMacros": []
   },
@@ -244,7 +245,7 @@
       "ignoreFunctionModuleName": false
     },
     "line_length": {
-      "length": 120,
+      "length": 140,
       "exclude": ["zcl_abapgit_object_pdts.clas.testclasses.abap"]
     },
     "line_only_punc": {
@@ -259,7 +260,7 @@
     "local_variable_names": {
       "expectedData": "^L._.*$",
       "expectedConstant": "^LC_.*$",
-      "expectedFS": "^<L._.*>$"
+      "expectedFS": "^<(L|F)._.*>$"
     },
     "main_file_contents": true,
     "max_one_statement": true,
@@ -286,9 +287,9 @@
     },
     "no_public_attributes": false,
     "object_naming": {
-      "clas": "^ZC(L|X)\\_ABAPGIT\\_",
-      "intf": "^ZIF\\_ABAPGIT\\_",
-      "prog": "^ZAP",
+      "clas": "^ZC(L|X)_",
+      "intf": "^ZIF_",
+      "prog": "^ZAP_",
       "fugr": "^ZABAPGIT",
       "tabl": "^Z",
       "ttyp": "^Z",
