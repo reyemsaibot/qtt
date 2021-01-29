@@ -17,12 +17,12 @@ REPORT z_qtt.
 DATA: lv_elem   TYPE sysuuid_25.
 DATA: lv_tr     TYPE trkorr.
 
-SELECTION-SCREEN BEGIN OF BLOCK b1k1 with frame.
+SELECTION-SCREEN BEGIN OF BLOCK b1k1 WITH FRAME.
 PARAMETERS: p_query TYPE rszcompid.
 
 SELECTION-SCREEN END OF BLOCK b1k1.
 
-SELECTION-SCREEN BEGIN OF BLOCK b1k2 with frame.
+SELECTION-SCREEN BEGIN OF BLOCK b1k2 WITH FRAME.
 SELECT-OPTIONS: s_tr FOR lv_tr,
                 s_el FOR lv_elem.
 
@@ -33,7 +33,7 @@ SELECTION-SCREEN END OF BLOCK b1k2.
 "Check Query on transport requests
 IF p_query <> ''.
   zcl_qtt=>get_query_on_requests( p_query ).
-  EXIT.
+  RETURN.
 ENDIF.
 
 "Identify query element
