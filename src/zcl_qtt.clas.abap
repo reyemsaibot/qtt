@@ -37,13 +37,6 @@ CLASS zcl_qtt DEFINITION
       END OF ty_elem.
 
     TYPES:
-      "! <p class="shorttext synchronized" lang="en">Type of Transport Request</p>
-      BEGIN OF ty_trkorr,
-        trkorr   TYPE trkorr,
-        trstatus TYPE trstatus,
-      END OF ty_trkorr.
-
-    TYPES:
       "! <p class="shorttext synchronized" lang="en">Table of Range</p>
       ty_t_range TYPE STANDARD TABLE OF rsrange WITH EMPTY KEY.
 

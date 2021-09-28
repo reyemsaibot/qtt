@@ -37,7 +37,6 @@
       "seoc_exposure_private",
       "seoc_exposure_protected",
       "seoc_exposure_public",
-      "seoc_exposure_public",
       "seoc_version_active",
       "seoc_version_inactive",
       "seok_access_free",
@@ -289,7 +288,7 @@
     "object_naming": {
       "clas": "^ZC(L|X)_",
       "intf": "^ZIF_",
-      "prog": "^ZAP_",
+      "prog": "^Z_",
       "fugr": "^ZABAPGIT",
       "tabl": "^Z",
       "ttyp": "^Z",

@@ -1,0 +1,23 @@
+{
+  "name": "qsf",
+  "version": "1.0.0",
+  "private": true,
+  "description": "rename test",
+  "main": "index.js",
+  "scripts": {
+    "lint": "abaplint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reyemsaibot/qsf.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reyemsaibot/qsf/issues"
+  },
+  "homepage": "https://github.com/reyemsaibot/qsf#readme",
+  "dependencies": {
+    "@abaplint/cli": "^2.79.8"
+  }
+}
